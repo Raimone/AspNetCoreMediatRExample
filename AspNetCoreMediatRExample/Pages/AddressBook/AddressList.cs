@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace AspNetCoreMediatRExample.Pages.AddressBook
 {
+    public enum ActionMessage
+    {
+        Failed = 0,
+        Success = 1
+    }
+
     public static class AddressDb
     {
         public static List<AddressBookEntry> Addresses { get; set; } = new List<AddressBookEntry>();
@@ -25,11 +31,11 @@ namespace AspNetCoreMediatRExample.Pages.AddressBook
             Line2 = line2;
 
         public Guid Id { get; }
-        public string Line1 { get; }
-        public string Line2 { get; }
-        public string City { get; }
-        public string State { get; }
-        public string PostalCode { get; }
+        public string Line1 { get; set; }
+        public string Line2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
 
         public static AddressBookEntry Create(string line1, string city, string state, string postalCode)
             => new AddressBookEntry(line1, city, state, postalCode);

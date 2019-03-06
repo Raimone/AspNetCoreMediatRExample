@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -9,16 +8,56 @@ namespace AspNetCoreMediatRExample.Pages.AddressBook
 {
     public class EditModel : PageModel
     {
-        [BindProperty] public UpdateAddressRequest UpdateAddressRequest { get; set; }
+        private readonly IMediator _mediator;
+        private GetAddressRequest AddressRequest; 
 
-        public void OnGet(string id)
+        /// <summary>
+        /// Instantiate our edit model
+        /// </summary>
+        /// <param name="mediator"></param>
+        /// <history>
+        ///     Raimone Brown   03/05/2019  created.
+        /// </history>
+        public EditModel(IMediator mediator)
         {
-            // Todo: Get address book entry, set UpdateAddressRequest fields
+            _mediator = mediator;
         }
 
-        public void OnPost()
+        [BindProperty] public UpdateAddressRequest UpdateAddressRequest { get; set; }
+
+        /// <summary>
+        /// get our address request to update
+        /// </summary>
+        /// <param name="id"></param>
+        /// <history>
+        ///     Raimone Brown   03/05/2019  added the call to get the address request
+        /// </history>
+        public async Task<ActionResult> OnGet(string id)
         {
-            // Todo: "Persist" updated address book entry
+            //create a address request with the passed in id
+            AddressRequest = new GetAddressRequest { Id = id };
+                        
+            UpdateAddressRequest = await _mediator.Send(AddressRequest);
+
+            return Page();
+        }
+
+        /// <summary>
+        /// send the updated address
+        /// </summary>
+        /// <returns></returns>
+        /// <history>
+        ///     Raimone Brown   03/05/2019  added call to send the updated address request
+        /// </history>
+        public async Task<ActionResult> OnPost()
+        {
+            if (ModelState.IsValid)
+            {
+                _ = await _mediator.Send(UpdateAddressRequest);
+                return RedirectToPage("Index");
+            }
+
+            return Page();
         }
     }
 }
